@@ -29,7 +29,6 @@ public:
 	CWnd *m_pChild;
 	CString m_title;
 
-	UINT UserRole=3;		//用户角色	校准者
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_DLG_FW };
