@@ -18,7 +18,6 @@
 
 #include "osplatformutil.h"
 
-#if defined(_USRDLL) || defined(_WINDLL)
 #ifdef I_OS_WIN
 typedef __int64 int64;           ///< 64 bit signed windows 定义windows int64
 #define DLL_EXPORT __declspec(dllexport) ///< define DLL_EXPORT windows 定义windows导出函数
@@ -28,17 +27,6 @@ typedef long long int64;           ///< 64 bit signed unix 定义Unix int64
 #else
 //Not support
 #endif // I_OS_WIN
-#else
-#ifdef I_OS_WIN
-typedef __int64 int64;           ///< 64 bit signed windows 定义windows int64
-#define DLL_EXPORT 
-#elif defined I_OS_UNIX
-typedef long long int64;           ///< 64 bit signed unix 定义Unix int64
-#define DLL_EXPORT
-#else
-//Not support
-#endif // I_OS_WIN
-#endif
 
 namespace itas109
 {
