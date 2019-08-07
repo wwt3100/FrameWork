@@ -24,7 +24,6 @@ DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
 		// 扩展 DLL 一次性初始化
 		if (!AfxInitExtensionModule(FrameWorkDLL, hInstance))
 			return 0;
-
 		// 将此 DLL 插入到资源链中
 		// 注意:  如果此扩展 DLL 由
 		//  MFC 规则 DLL (如 ActiveX 控件)隐式链接到，

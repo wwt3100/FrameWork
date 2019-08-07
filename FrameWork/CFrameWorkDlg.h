@@ -49,6 +49,8 @@ public:
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnCOMPortRefresh();
 	afx_msg void OnCommandTransmission(UINT uID);
+	afx_msg void OnLangChn();
+	afx_msg void OnLangEn();
 };
 AFX_API_EXPORT UINT16 WINAPI calculate_CRC16(BYTE* pDataIn, int start, int len);
 AFX_API_EXPORT UINT16 WINAPI calculate_CRC16(CByteArray* pDataIn, int start, int len);

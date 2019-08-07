@@ -63,6 +63,14 @@ AFX_API_EXPORT UINT16 WINAPI calculate_CRC16(CByteArray* pDataIn, int start, int
 	return wResult;
 }
 
+//CString GetString(UINT uID)
+//{
+//	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+//	CString str;
+//	str.LoadString(uID);
+//	retu
+//}
+
 // CFrameWorkDlg 对话框
 
 IMPLEMENT_DYNAMIC(CFrameWorkDlg, CDialogEx)
@@ -106,6 +114,8 @@ BEGIN_MESSAGE_MAP(CFrameWorkDlg, CDialogEx)
 	ON_COMMAND(MU_REFRESH, &CFrameWorkDlg::OnCOMPortRefresh)
 	ON_COMMAND_RANGE(WM_USER + 0x100, WM_USER + 0x100+15, &CFrameWorkDlg::OnConnect)
 	ON_COMMAND_RANGE(WM_USER + 0x200, WM_USER + 0x300, &CFrameWorkDlg::OnCommandTransmission)
+	ON_COMMAND(MU_LANG_CHN, &CFrameWorkDlg::OnLangChn)
+	ON_COMMAND(MU_LANG_EN, &CFrameWorkDlg::OnLangEn)
 END_MESSAGE_MAP()
 
 
@@ -152,6 +162,18 @@ BOOL CFrameWorkDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	SetWindowText(m_title);
+	LANGID langId = GetThreadUILanguage();
+	CMenu* lang_menu = AfxGetMainWnd()->GetMenu()->GetSubMenu(2);
+	if (LANG_CHINESE == PRIMARYLANGID(LANGIDFROMLCID(langId)))
+	{
+		lang_menu->ModifyMenu(0, MF_BYPOSITION | MF_CHECKED, MU_LANG_CHN, _T("简体中文"));
+	}
+	else
+	{
+		lang_menu->ModifyMenu(1, MF_BYPOSITION | MF_CHECKED, MU_LANG_EN, _T("English"));
+	}
+	lang_menu->Detach();
+	
 	HWND hChild = CreateChildDlg();
 	if (hChild != nullptr)
 	{
@@ -182,8 +204,7 @@ BOOL CFrameWorkDlg::OnInitDialog()
 
 void CFrameWorkDlg::OnConnect(UINT uID)
 {
-	CString csPortName= m_SerialPortList[uID - WM_USER - 0x100].strPortName;
-
+	CString csPortName = m_SerialPortList[uID - WM_USER - 0x100].strPortName;
 	if (m_SerialPort.isOpened())
 	{
 		m_SerialPort.close();
@@ -191,18 +212,22 @@ void CFrameWorkDlg::OnConnect(UINT uID)
 	string sPortName = CW2A(csPortName.GetString());
 	m_SerialPort.init(sPortName, 9600, ParityNone, DataBits8, StopOne, FlowNone, 512);
 	m_SerialPort.open();
+	CString LocStr;
 	if (m_SerialPort.isOpened())
 	{
 		CMenu *pmenu = AfxGetMainWnd()->GetMenu();
-		pmenu->ModifyMenu(0, MF_BYPOSITION | MF_DISABLED, 0, _T("已连接(") + csPortName + _T(")"));
-		pmenu->ModifyMenu(1, MF_BYPOSITION, MU_DISCONNECT, _T("断开"));
+		LocStr.LoadString(IDS_CONNECTED);
+		pmenu->ModifyMenu(0, MF_BYPOSITION | MF_DISABLED, 0, LocStr + csPortName + _T(")"));
+		LocStr.LoadString(IDS_DISCONNECT);
+		pmenu->ModifyMenu(1, MF_BYPOSITION, MU_DISCONNECT, LocStr);
 		pmenu->Detach();
 		DrawMenuBar();
 		EnableChildDlg(TRUE);	
 	}
 	else
 	{
-		AfxMessageBox(_T("连接失败!"), MB_ICONERROR);
+		LocStr.LoadString(IDS_CONNECT_FAILED);
+		AfxMessageBox(LocStr, MB_ICONERROR);
 	}
 }
 
@@ -212,9 +237,12 @@ void CFrameWorkDlg::OnDisconnect()
 	if (m_SerialPort.isOpened() == true)
 	{
 		m_SerialPort.close();
+		CString LocStr;
 		CMenu *pmenu = AfxGetMainWnd()->GetMenu();
-		pmenu->ModifyMenu(0, MF_BYPOSITION, 0, _T("串口"));
-		pmenu->ModifyMenu(1, MF_BYPOSITION | MF_DISABLED, MU_DISCONNECT, _T("断开"));
+		LocStr.LoadString(IDS_SERVER_PORT);
+		pmenu->ModifyMenu(0, MF_BYPOSITION, 0, LocStr);
+		LocStr.LoadString(IDS_DISCONNECT);
+		pmenu->ModifyMenu(1, MF_BYPOSITION | MF_DISABLED, MU_DISCONNECT, LocStr);
 		pmenu->Detach();
 		DrawMenuBar();
 		EnableChildDlg(FALSE);
@@ -253,7 +281,9 @@ void CFrameWorkDlg::OnCOMPortRefresh()
 			break;
 	}
 	//menu->CreateMenu();
-	menu->AppendMenu(MF_STRING, MU_REFRESH, _T("刷新"));
+	CString LocStr;
+	LocStr.LoadString(IDS_REFRESH);
+	menu->AppendMenu(MF_STRING, MU_REFRESH, LocStr);
 	menu->AppendMenu(MF_SEPARATOR);
 	//	//获取串口号
 	//list<string> m_portsList = CSerialPortInfo::availablePorts();
@@ -265,11 +295,19 @@ void CFrameWorkDlg::OnCOMPortRefresh()
 	//	menu->AppendMenu(0, WM_USER + 0x100 + i, m_portname);
 	//}
 	EnumSerialPorts(m_SerialPortList, FALSE/*include all*/);
-	for (INT ii = 0; ii < m_SerialPortList.GetSize(); ii++)
+	if (m_SerialPortList.GetSize() == 0)
 	{
-		CString show;
-		show.Format(_T("%-8s %s"), m_SerialPortList[ii].strPortName, (m_SerialPortList[ii].strPortDesc.GetLength() > 24) ? (m_SerialPortList[ii].strPortDesc.Left(24) + _T("...")) : m_SerialPortList[ii].strPortDesc);
-		menu->AppendMenu(0, WM_USER + 0x100 + ii, show);
+		LocStr.LoadString(IDS_NO_SERIALPORT);
+		menu->AppendMenu(MF_STRING |MF_DISABLED,0, LocStr);
+	}
+	else
+	{
+		for (INT ii = 0; ii < m_SerialPortList.GetSize(); ii++)
+		{
+			CString show;
+			show.Format(_T("%-8s %s"), m_SerialPortList[ii].strPortName, (m_SerialPortList[ii].strPortDesc.GetLength() > 24) ? (m_SerialPortList[ii].strPortDesc.Left(24) + _T("...")) : m_SerialPortList[ii].strPortDesc);
+			menu->AppendMenu(0, WM_USER + 0x100 + ii, show);
+		}
 	}
 }
 
@@ -279,3 +317,41 @@ void CFrameWorkDlg::OnCommandTransmission(UINT uID)
 }
 
 
+void Reboot()
+{
+	TCHAR pBuf[MAX_PATH];
+	//获取应用程序完全路径，比 GetCurrentDirectory 好用多了
+	GetModuleFileName(NULL, pBuf, MAX_PATH);
+
+	STARTUPINFO startupinfo;
+	PROCESS_INFORMATION proc_info;
+	memset(&startupinfo, 0, sizeof(STARTUPINFO));
+	startupinfo.cb = sizeof(STARTUPINFO);
+	// 最重要的地方
+	::CreateProcess(pBuf, NULL, NULL, NULL, FALSE,
+		NORMAL_PRIORITY_CLASS, NULL, NULL, &startupinfo, &proc_info);
+	::SendMessage(AfxGetMainWnd()->m_hWnd, WM_CLOSE, 0, 0);
+}
+
+void CFrameWorkDlg::OnLangChn()
+{
+	CString LocStr;
+	LocStr.LoadString(IDS_LANG_CHANGE);
+	AfxGetApp()->WriteProfileInt(_T("Config"), _T("Language"), PRIMARYLANGID(LANG_CHINESE));
+	if (AfxMessageBox(LocStr, MB_OKCANCEL | MB_ICONINFORMATION) == IDOK)
+	{
+		Reboot();
+	}
+}
+
+
+void CFrameWorkDlg::OnLangEn()
+{
+	CString LocStr;
+	LocStr.LoadString(IDS_LANG_CHANGE);
+	AfxGetApp()->WriteProfileInt(_T("Config"), _T("Language"), PRIMARYLANGID(LANG_ENGLISH));
+	if (AfxMessageBox(LocStr, MB_OKCANCEL | MB_ICONINFORMATION) == IDOK)
+	{
+		Reboot();
+	}
+}

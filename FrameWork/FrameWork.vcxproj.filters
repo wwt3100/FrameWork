@@ -45,13 +45,7 @@
     <ClCompile Include="SerialPortLib\SerialPortInfoBase.cpp">
       <Filter>CSerialPort</Filter>
     </ClCompile>
-    <ClCompile Include="SerialPortLib\SerialPortInfoUnixBase.cpp">
-      <Filter>CSerialPort</Filter>
-    </ClCompile>
     <ClCompile Include="SerialPortLib\SerialPortInfoWinBase.cpp">
-      <Filter>CSerialPort</Filter>
-    </ClCompile>
-    <ClCompile Include="SerialPortLib\SerialPortUnixBase.cpp">
       <Filter>CSerialPort</Filter>
     </ClCompile>
     <ClCompile Include="SerialPortLib\SerialPortWinBase.cpp">
@@ -103,13 +97,7 @@
     <ClInclude Include="SerialPortLib\SerialPortInfoBase.h">
       <Filter>CSerialPort</Filter>
     </ClInclude>
-    <ClInclude Include="SerialPortLib\SerialPortInfoUnixBase.h">
-      <Filter>CSerialPort</Filter>
-    </ClInclude>
     <ClInclude Include="SerialPortLib\SerialPortInfoWinBase.h">
-      <Filter>CSerialPort</Filter>
-    </ClInclude>
-    <ClInclude Include="SerialPortLib\SerialPortUnixBase.h">
       <Filter>CSerialPort</Filter>
     </ClInclude>
     <ClInclude Include="SerialPortLib\SerialPortWinBase.h">

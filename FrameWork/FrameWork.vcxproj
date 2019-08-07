@@ -107,7 +107,7 @@
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </Midl>
     <ResourceCompile>
-      <Culture>0x0804</Culture>
+      <Culture>0x0009</Culture>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
@@ -160,7 +160,7 @@
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </Midl>
     <ResourceCompile>
-      <Culture>0x0804</Culture>
+      <Culture>0x0009</Culture>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
@@ -217,9 +217,7 @@
     <ClCompile Include="SerialPortLib\SerialPortBase.cpp" />
     <ClCompile Include="SerialPortLib\SerialPortInfo.cpp" />
     <ClCompile Include="SerialPortLib\SerialPortInfoBase.cpp" />
-    <ClCompile Include="SerialPortLib\SerialPortInfoUnixBase.cpp" />
     <ClCompile Include="SerialPortLib\SerialPortInfoWinBase.cpp" />
-    <ClCompile Include="SerialPortLib\SerialPortUnixBase.cpp" />
     <ClCompile Include="SerialPortLib\SerialPortWinBase.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -242,9 +240,7 @@
     <ClInclude Include="SerialPortLib\SerialPortBase.h" />
     <ClInclude Include="SerialPortLib\SerialPortInfo.h" />
     <ClInclude Include="SerialPortLib\SerialPortInfoBase.h" />
-    <ClInclude Include="SerialPortLib\SerialPortInfoUnixBase.h" />
     <ClInclude Include="SerialPortLib\SerialPortInfoWinBase.h" />
-    <ClInclude Include="SerialPortLib\SerialPortUnixBase.h" />
     <ClInclude Include="SerialPortLib\SerialPortWinBase.h" />
     <ClInclude Include="SerialPortLib\SerialPort_global.h" />
     <ClInclude Include="SerialPortLib\sigslot.h" />
