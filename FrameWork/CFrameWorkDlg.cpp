@@ -112,8 +112,8 @@ BEGIN_MESSAGE_MAP(CFrameWorkDlg, CDialogEx)
 	ON_COMMAND(MU_DISCONNECT, &CFrameWorkDlg::OnDisconnect)
 	ON_COMMAND(MU_ABOUT, &CFrameWorkDlg::OnAbout)
 	ON_COMMAND(MU_REFRESH, &CFrameWorkDlg::OnCOMPortRefresh)
-	ON_COMMAND_RANGE(WM_USER + 0x100, WM_USER + 0x100+15, &CFrameWorkDlg::OnConnect)
-	ON_COMMAND_RANGE(WM_USER + 0x200, WM_USER + 0x300, &CFrameWorkDlg::OnCommandTransmission)
+	ON_COMMAND_RANGE(WM_USER + 0x100, WM_USER + 0x100+15, &CFrameWorkDlg::OnConnect)			
+	ON_COMMAND_RANGE(WM_USER + 0x200, WM_APP - 1, &CFrameWorkDlg::OnCommandTransmission)		//0x600-0x7FFF 范围内的命令会透传
 	ON_COMMAND(MU_LANG_CHN, &CFrameWorkDlg::OnLangChn)
 	ON_COMMAND(MU_LANG_EN, &CFrameWorkDlg::OnLangEn)
 END_MESSAGE_MAP()
@@ -210,7 +210,7 @@ void CFrameWorkDlg::OnConnect(UINT uID)
 		m_SerialPort.close();
 	}
 	string sPortName = CW2A(csPortName.GetString());
-	m_SerialPort.init(sPortName, 9600, ParityNone, DataBits8, StopOne, FlowNone, 512);
+	m_SerialPort.init(sPortName, m_baudRate, ParityNone, DataBits8, StopOne, FlowNone, 512);
 	m_SerialPort.open();
 	CString LocStr;
 	if (m_SerialPort.isOpened())
@@ -222,13 +222,18 @@ void CFrameWorkDlg::OnConnect(UINT uID)
 		pmenu->ModifyMenu(1, MF_BYPOSITION, MU_DISCONNECT, LocStr);
 		pmenu->Detach();
 		DrawMenuBar();
-		EnableChildDlg(TRUE);	
+		afterConnect();
 	}
 	else
 	{
 		LocStr.LoadString(IDS_CONNECT_FAILED);
 		AfxMessageBox(LocStr, MB_ICONERROR);
 	}
+}
+
+void CFrameWorkDlg::afterConnect()
+{
+	EnableChildDlg(TRUE);
 }
 
 
@@ -245,8 +250,13 @@ void CFrameWorkDlg::OnDisconnect()
 		pmenu->ModifyMenu(1, MF_BYPOSITION | MF_DISABLED, MU_DISCONNECT, LocStr);
 		pmenu->Detach();
 		DrawMenuBar();
-		EnableChildDlg(FALSE);
+		afterDisconnect();
 	}
+}
+
+void CFrameWorkDlg::afterDisconnect()
+{
+	EnableChildDlg(FALSE);
 }
 
 
@@ -343,7 +353,6 @@ void CFrameWorkDlg::OnLangChn()
 		Reboot();
 	}
 }
-
 
 void CFrameWorkDlg::OnLangEn()
 {

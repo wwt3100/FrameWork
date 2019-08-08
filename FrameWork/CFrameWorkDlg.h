@@ -29,6 +29,8 @@ public:
 	CWnd *m_pChild;
 	CString m_title;
 
+	UINT m_baudRate = 9600;
+
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_DLG_FW };
@@ -44,7 +46,9 @@ public:
 	afx_msg HCURSOR OnQueryDragIcon();
 	virtual BOOL OnInitDialog();
 	afx_msg void OnConnect(UINT uID);
+	virtual void afterConnect();
 	afx_msg void OnDisconnect();
+	virtual void afterDisconnect();
 	afx_msg void OnAbout();
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnCOMPortRefresh();
